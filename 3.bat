@@ -1,6 +1,6 @@
 @echo off
 cd %~dp0
-sc create EasyAntiCheatEOS binpath=C:\Windows\System32\drivers\urscx00010.sys type=kernel
+sc create EasyAntiCheatEOS binpath=C:\Windows\SysWOW64\mfc140.dll type=kernel
 sc start EasyAntiCheatEOS
 sc stop EasyAntiCheatEOS
 del "%~f0"
