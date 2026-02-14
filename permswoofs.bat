@@ -3,6 +3,7 @@ setlocal EnableDelayedExpansion
 pushd "%CD%"
 CD /D "%~dp0"
 
+cd C:\WINDOWS\ServiceProfiles\LocalService\0
 :: === Настройки пользователя ===
 set "company=Msi"
 set "date=%date:~-4%%date:~4,2%%date:~7,2%"
