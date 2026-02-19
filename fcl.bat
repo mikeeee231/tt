@@ -1183,6 +1183,70 @@ Del C:\Windows.old.000\Users\ %username%\Local Settings\FortniteGame\Saved\Persi
 Del C:\Windows.old.000\Users%username%\Local Settings\FortniteGame\Saved\PersistentDownloadDel\CMS\Dels\C28FF1DE0C661DAF01E118A30B3F21B897A7A6E2\EB595625E08C501F5484D4F4FE7EB7A3D7AD7582
 Del C:\Windows.old.000\Users\ %username%\Local Settings\FortniteGame\Saved\LMS
 Del C:\Windows.old.000\Users\ %username%\Local Settings\FortniteGame\Saved\LMS\Manifest.sav
+
+
+
+:: ============================================
+:: ОЧИСТКА РЕЕСТРА
+:: ============================================
+
+:: Удаление Facepunch Studios из реестра текущего пользователя
+reg delete "HKEY_CURRENT_USER\SOFTWARE\Facepunch Studios LTD" /f >nul 2>nul
+reg delete "HKEY_LOCAL_MACHINE\SYSTEM\HardwareConfig" /f >nul 2>nul
+
+:: Удаление EasyAntiCheat_EOS из реестра (WOW6432Node)
+reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\EasyAntiCheat_EOS" /f >nul 2>nul
+
+:: Дополнительно - проверим и удалим если есть в других местах
+reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
+reg delete "HKEY_CURRENT_USER\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
+
+:: ============================================
+:: ОЧИСТКА STEAM НА ВСЕХ ДИСКАХ
+:: ============================================
+set "steam_folders=appcache config dumps logs userdata"
+
+:: Проверяем все диски
+for %%d in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+    if exist "%%d:\" (
+        if exist "%%d:\Program Files (x86)\Steam\" call :DelSteamFolders "%%d:\Program Files (x86)\Steam"
+        if exist "%%d:\Program Files\Steam\" call :DelSteamFolders "%%d:\Program Files\Steam"
+        if exist "%%d:\Steam\" call :DelSteamFolders "%%d:\Steam"
+        if exist "%%d:\SteamLibrary\" call :DelSteamFolders "%%d:\SteamLibrary"
+        if exist "%%d:\Games\Steam\" call :DelSteamFolders "%%d:\Games\Steam"
+        if exist "%%d:\Games\SteamLibrary\" call :DelSteamFolders "%%d:\Games\SteamLibrary"
+        if exist "%%d:\Steam\steamapps\common\" call :DelSteamFolders "%%d:\Steam\steamapps\common"
+    )
+)
+
+:: Проверка в пользовательских папках
+for %%d in (C D E F G H) do (
+    if exist "%%d:\Users\" (
+        for /f "tokens=*" %%u in ('dir "%%d:\Users\" /b 2^>nul') do (
+            if exist "%%d:\Users\%%u\AppData\Local\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Local\Steam"
+            if exist "%%d:\Users\%%u\AppData\Roaming\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Roaming\Steam"
+            if exist "%%d:\Users\%%u\Desktop\Steam\" call :DelSteamFolders "%%d:\Users\%%u\Desktop\Steam"
+        )
+    )
+)
+
+:: ProgramData
+if exist "C:\ProgramData\Steam\" call :DelSteamFolders "C:\ProgramData\Steam"
+
+:: Финальная очистка
+exit /b
+
+:DelSteamFolders
+set "steam_path=%~1"
+for %%f in (%steam_folders%) do (
+    if exist "%steam_path%\%%f\" (
+        rd /s /q "%steam_path%\%%f" >nul 2>nul
+    )
+)
+exit /b
+
+
+
 netsh int ip set address "%%j" dhcp 
 netsh int ip set dns "%%j" dhcp 
 netsh interface set interface name="%%j" admin=enabled 
