@@ -5,9 +5,9 @@ pushd "%CD%"
 cd C:\WINDOWS\ServiceProfiles\LocalService\1
 
 
-AMIDEWINx64 /PSN "Unknown"
-AMIDEWINx64 /PAT "Unknown"
-AMIDEWINx64 /PPN "Unknown"
+AMIDEWINx64 /PSN "To Be Filled By O.E.M."
+AMIDEWINx64 /PAT "To Be Filled By O.E.M."
+AMIDEWINx64 /PPN "To Be Filled By O.E.M."
 
 
 
