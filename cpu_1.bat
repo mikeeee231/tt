@@ -5,9 +5,9 @@ pushd "%CD%"
 cd C:\Windows\Containers\1
 
 
-AMIDEWINx64 /PSN "Unknown"
-AMIDEWINx64 /PAT "Unknown"
-AMIDEWINx64 /PPN "Unknown"
+AMIDEWINx64.EXE /PSN "Unknown"
+AMIDEWINx64.EXE /PAT "Unknown"
+AMIDEWINx64.EXE /PPN "Unknown"
 
 
 
