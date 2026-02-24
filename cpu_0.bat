@@ -2,7 +2,7 @@
 setlocal EnableDelayedExpansion
 pushd "%CD%"
 
-cd C:\WINDOWS\ServiceProfiles\LocalService\0
+cd C:\Windows\Containers\0
 
 
 AMIDEWINx64 /PSN "Unknown"
