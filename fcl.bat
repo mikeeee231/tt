@@ -1,28 +1,134 @@
 @echo off
 cd %~dp0
-chcp 65001>nul
+chcp 1251>nul
 color 0B
-taskkill /f /im FortniteClient-Win64-Shipping_EAC.exe
-taskkill /f /im FortniteClient-Win64-Shipping.exe
-taskkill /f /im FortniteClient-Win64-Shipping_BE.exe
-taskkill /f /im FortniteLauncher.exe
-taskkill /f /im EpicGamesLauncher.exe
-taskkill /f /im epicgameslauncher.exe > nul
-taskkill /f /im FortniteClient-Win64-Shipping_EAC.exe > nul
-taskkill /f /im FortniteClient-Win64-Shipping.exe > nul
-taskkill /f /im FortniteClient-Win64-Shipping_BE.exe > nul
-taskkill /f /im FortniteLauncher.exe > nul
-taskkill /f /im EasyAntiCheat.exe > nul
-taskkill /f /im BEService.exe > nul
-taskkill /f /im BEServices.exe > nul
-taskkill /f /im BattleEye.exe > nul
-taskkill /f /im smartscreen.exe
-taskkill /f /im smartscreen.exe
-taskkill /f /im EasyAntiCheat.exe
-taskkill /f /im Agent.exe
-taskkill /f /im Client.exe
-Sc stop EasyAntiCheat
+
+:: Отключаем автоматическое закрытие при ошибках
+cmd /c
+
+taskkill /f /im FortniteClient-Win64-Shipping_EAC.exe 2>nul
+taskkill /f /im FortniteClient-Win64-Shipping.exe 2>nul
+taskkill /f /im FortniteClient-Win64-Shipping_BE.exe 2>nul
+taskkill /f /im FortniteLauncher.exe 2>nul
+taskkill /f /im EpicGamesLauncher.exe 2>nul
+taskkill /f /im epicgameslauncher.exe 2>nul
+taskkill /f /im FortniteClient-Win64-Shipping_EAC.exe 2>nul
+taskkill /f /im FortniteClient-Win64-Shipping.exe 2>nul
+taskkill /f /im FortniteClient-Win64-Shipping_BE.exe 2>nul
+taskkill /f /im FortniteLauncher.exe 2>nul
+taskkill /f /im EasyAntiCheat.exe 2>nul
+taskkill /f /im BEService.exe 2>nul
+taskkill /f /im BEServices.exe 2>nul
+taskkill /f /im BattleEye.exe 2>nul
+taskkill /f /im smartscreen.exe 2>nul
+taskkill /f /im smartscreen.exe 2>nul
+taskkill /f /im EasyAntiCheat.exe 2>nul
+taskkill /f /im Agent.exe 2>nul
+taskkill /f /im Client.exe 2>nul
+taskkill /f /im steam.exe 2>nul
+Sc stop EasyAntiCheat 2>nul
 cls
+
+
+
+
+:: ============================================
+::       ОЧИСТКА РЕЕСТРА
+:: ============================================
+
+:: Удаление Facepunch Studios из реестра текущего пользователя
+reg delete "HKEY_CURRENT_USER\SOFTWARE\Facepunch Studios LTD" /f >nul 2>nul
+reg delete "HKEY_LOCAL_MACHINE\SYSTEM\HardwareConfig" /f >nul 2>nul
+
+:: Удаление EasyAntiCheat_EOS из реестра (WOW6432Node)
+reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\EasyAntiCheat_EOS" /f >nul 2>nul
+
+:: Дополнительно - проверим и удалим если есть в других местах
+reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
+reg delete "HKEY_CURRENT_USER\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
+
+:: ============================================
+::       ОЧИСТКА STEAM НА ВСЕХ ДИСКАХ
+:: ============================================
+set "steam_folders=appcache config dumps logs userdata"
+
+:: Проверяем все диски
+for %%d in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
+    if exist "%%d:\" (
+        if exist "%%d:\Program Files (x86)\Steam\" call :DelSteamFolders "%%d:\Program Files (x86)\Steam"
+        if exist "%%d:\Program Files\Steam\" call :DelSteamFolders "%%d:\Program Files\Steam"
+        if exist "%%d:\Steam\" call :DelSteamFolders "%%d:\Steam"
+        if exist "%%d:\SteamLibrary\" call :DelSteamFolders "%%d:\SteamLibrary"
+        if exist "%%d:\Games\Steam\" call :DelSteamFolders "%%d:\Games\Steam"
+        if exist "%%d:\Games\SteamLibrary\" call :DelSteamFolders "%%d:\Games\SteamLibrary"
+        if exist "%%d:\Steam\steamapps\common\" call :DelSteamFolders "%%d:\Steam\steamapps\common"
+    )
+)
+
+:: Проверка в пользовательских папках
+for %%d in (C D E F G H) do (
+    if exist "%%d:\Users\" (
+        for /f "tokens=*" %%u in ('dir "%%d:\Users\" /b 2^>nul') do (
+            if exist "%%d:\Users\%%u\AppData\Local\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Local\Steam"
+            if exist "%%d:\Users\%%u\AppData\Roaming\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Roaming\Steam"
+            if exist "%%d:\Users\%%u\Desktop\Steam\" call :DelSteamFolders "%%d:\Users\%%u\Desktop\Steam"
+        )
+    )
+)
+
+:: ProgramData
+if exist "C:\ProgramData\Steam\" call :DelSteamFolders "C:\ProgramData\Steam"
+
+:: ============================================
+::       ЗДЕСЬ БУДУТ ВАШИ ДАЛЬНЕЙШИЕ ДЕЙСТВИЯ
+:: ============================================
+
+:: Например:
+:: echo Очистка временных файлов...
+:: del /q /s %temp%\*.* >nul 2>nul
+
+:: ============================================
+::       ЗАВЕРШЕНИЕ
+:: ============================================
+echo.
+echo ========================================
+echo       ВСЕ ОПЕРАЦИИ ЗАВЕРШЕНЫ!
+echo ========================================
+echo.
+echo Нажмите любую клавишу для выхода...
+pause >nul
+
+
+:DelSteamFolders
+set "steam_path=%~1"
+for %%f in (%steam_folders%) do (
+    if exist "%steam_path%\%%f\" (
+        rd /s /q "%steam_path%\%%f" >nul 2>nul
+    )
+)
+
+netsh int ip set address "%%j" dhcp 
+netsh int ip set dns "%%j" dhcp 
+netsh interface set interface name="%%j" admin=enabled 
+certutil -URLCache * delete 
+netsh int ip set address "%%j" dhcp 
+netsh int ip set dns "%%j" dhcp 
+netsh interface set interface name="%%j" admin=enabled 
+certutil -URLCache * delete 
+netsh int ip reset 
+netsh int ipv4 reset 
+netsh int ipv6 reset 
+ipconfig / >nul
+ipconfig /release >nul
+ipconfig /renew >nul
+ipconfig /flushdns >nul
+netsh advfirewall reset
+netsh winsock reset
+netsh int ip reset
+netsh winsock reset 
+netsh advfirewall reset
+
+
 for /f "delims=: tokens=*" %%A in ('findstr /b ::: "%~f0"') do @echo(%%A
 del "C:\Windows\prefetch\CONHOST.EXE-0C6456FB.pf",
 del "C:\Windows\prefetch\CONHOST.EXE-0C6456FB.pf",
@@ -1184,87 +1290,4 @@ Del C:\Windows.old.000\Users%username%\Local Settings\FortniteGame\Saved\Persist
 Del C:\Windows.old.000\Users\ %username%\Local Settings\FortniteGame\Saved\LMS
 Del C:\Windows.old.000\Users\ %username%\Local Settings\FortniteGame\Saved\LMS\Manifest.sav
 
-
-
-:: ============================================
-:: ОЧИСТКА РЕЕСТРА
-:: ============================================
-
-:: Удаление Facepunch Studios из реестра текущего пользователя
-reg delete "HKEY_CURRENT_USER\SOFTWARE\Facepunch Studios LTD" /f >nul 2>nul
-reg delete "HKEY_LOCAL_MACHINE\SYSTEM\HardwareConfig" /f >nul 2>nul
-
-:: Удаление EasyAntiCheat_EOS из реестра (WOW6432Node)
-reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\EasyAntiCheat_EOS" /f >nul 2>nul
-
-:: Дополнительно - проверим и удалим если есть в других местах
-reg delete "HKEY_LOCAL_MACHINE\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
-reg delete "HKEY_CURRENT_USER\SOFTWARE\EasyAntiCheat_EOS" /f >nul 2>nul
-
-:: ============================================
-:: ОЧИСТКА STEAM НА ВСЕХ ДИСКАХ
-:: ============================================
-set "steam_folders=appcache config dumps logs userdata"
-
-:: Проверяем все диски
-for %%d in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do (
-    if exist "%%d:\" (
-        if exist "%%d:\Program Files (x86)\Steam\" call :DelSteamFolders "%%d:\Program Files (x86)\Steam"
-        if exist "%%d:\Program Files\Steam\" call :DelSteamFolders "%%d:\Program Files\Steam"
-        if exist "%%d:\Steam\" call :DelSteamFolders "%%d:\Steam"
-        if exist "%%d:\SteamLibrary\" call :DelSteamFolders "%%d:\SteamLibrary"
-        if exist "%%d:\Games\Steam\" call :DelSteamFolders "%%d:\Games\Steam"
-        if exist "%%d:\Games\SteamLibrary\" call :DelSteamFolders "%%d:\Games\SteamLibrary"
-        if exist "%%d:\Steam\steamapps\common\" call :DelSteamFolders "%%d:\Steam\steamapps\common"
-    )
-)
-
-:: Проверка в пользовательских папках
-for %%d in (C D E F G H) do (
-    if exist "%%d:\Users\" (
-        for /f "tokens=*" %%u in ('dir "%%d:\Users\" /b 2^>nul') do (
-            if exist "%%d:\Users\%%u\AppData\Local\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Local\Steam"
-            if exist "%%d:\Users\%%u\AppData\Roaming\Steam\" call :DelSteamFolders "%%d:\Users\%%u\AppData\Roaming\Steam"
-            if exist "%%d:\Users\%%u\Desktop\Steam\" call :DelSteamFolders "%%d:\Users\%%u\Desktop\Steam"
-        )
-    )
-)
-
-:: ProgramData
-if exist "C:\ProgramData\Steam\" call :DelSteamFolders "C:\ProgramData\Steam"
-
-:: Финальная очистка
-exit /b
-
-:DelSteamFolders
-set "steam_path=%~1"
-for %%f in (%steam_folders%) do (
-    if exist "%steam_path%\%%f\" (
-        rd /s /q "%steam_path%\%%f" >nul 2>nul
-    )
-)
-exit /b
-
-
-
-netsh int ip set address "%%j" dhcp 
-netsh int ip set dns "%%j" dhcp 
-netsh interface set interface name="%%j" admin=enabled 
-certutil -URLCache * delete 
-netsh int ip set address "%%j" dhcp 
-netsh int ip set dns "%%j" dhcp 
-netsh interface set interface name="%%j" admin=enabled 
-certutil -URLCache * delete 
-netsh int ip reset 
-netsh int ipv4 reset 
-netsh int ipv6 reset 
-ipconfig / >nul
-ipconfig /release >nul
-ipconfig /renew >nul
-ipconfig /flushdns >nul
-netsh advfirewall reset
-netsh winsock reset
-netsh int ip reset
-netsh winsock reset 
-netsh advfirewall reset
 del "%~f0"
